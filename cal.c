@@ -58,7 +58,7 @@ int main(int argc, char **argv){
  }
  if(mpz_sgn(year) < 1 || !month_min || month_min > 12){
   fputs(gettext(
-   "learn to use cal, you idiot: http://opengroup.org/onlinepubs/9699919799/cal.html\n"),
+   "learn to use cal, you idiot: http://opengroup.org/onlinepubs/9699919799/utilities/cal.html\n"),
    stderr);
   exit(1);
  }
