@@ -24,7 +24,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
-#include <wchar.h>
 
 #include <gmp.h>
 
@@ -36,7 +35,7 @@ int main(int argc, char **argv){
  const int_fast8_t months_days[12] = { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31,
   30, 31 };
  time_t t = time(NULL);
- wchar_t weekday[13] = {0}, weekdays[23] = {0}, month_name[LINE_MAX] = {0},
+ char weekday[13] = {0}, weekdays[23] = {0}, month_name[LINE_MAX] = {0},
   cal_head[LINE_MAX] = {0};
  struct tm *time_struct = localtime(&t);
  setlocale(LC_ALL, "");
@@ -60,24 +59,26 @@ int main(int argc, char **argv){
  }
  for(int_fast8_t i = 0; i < 7; ++i){
   time_struct->tm_wday = i;
-  wcsftime(weekday, 13, L"%a", time_struct);
+  strftime(weekday, 13, "%a", time_struct);
   weekday[2] = 0;
-  wcsncat(weekdays, weekday, 12);
-  wcscat(weekdays, L" ");
+  strcat(weekdays, weekday);
+  strcat(weekdays, " ");
  }
- wcscat(weekdays, L"\n");
+ strcat(weekdays, "\n");
  for(uintmax_t month = month_min; month <= month_max; ++month){
   time_struct->tm_mon = month - 1;
-  wcsftime(month_name, LINE_MAX, L"%OB", time_struct);
+  strftime(month_name, LINE_MAX, "%B", time_struct);
   if(month > month_min) putchar('\n');
-  for(int_fast8_t i = (20 - swprintf(cal_head, LINE_MAX, L"%ls %s\n", month_name, mpz_get_str(NULL, 10, year))) / 2; i > 0; --i)
+  for(int_fast8_t i = (20 - snprintf(cal_head, LINE_MAX, "%s %s\n", month_name, mpz_get_str(NULL, 10, year))) / 2; i > 0; --i)
    putchar(' ');
-  fputws(cal_head, stdout);
-  fputws(weekdays, stdout);
+  fputs(month_name, stdout);
+  putchar(' ');
+  printf("%s\n", mpz_get_str(NULL, 10, year));
+  fputs(weekdays, stdout);
   if(!mpz_cmp_ui(year, 1752) && month == 9){
-   puts("       1  2 14 15 16");
-   puts("17 18 19 20 21 22 23");
-   puts("24 25 26 27 28 29 30");
+   fputs("       1  2 14 15 16", stdout);
+   fputs("17 18 19 20 21 22 23", stdout);
+   fputs("24 25 26 27 28 29 30", stdout);
   }else{
    month_days = months_days[month - 1];
    mpz_init(tmp1);
