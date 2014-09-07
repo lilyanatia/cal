@@ -18,6 +18,7 @@
 
 #include <inttypes.h>
 #include <limits.h>
+#include <locale.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -26,8 +27,6 @@
 #include <wchar.h>
 
 #include <gmp.h>
-#include <langinfo.h>
-#include <libintl.h>
 
 int main(int argc, char **argv){
  mpz_t year, tmp1, tmp2, tmp3, tmp4;
@@ -40,9 +39,7 @@ int main(int argc, char **argv){
  wchar_t weekday[13] = {0}, weekdays[23] = {0}, month_name[LINE_MAX] = {0},
   cal_head[LINE_MAX] = {0};
  struct tm *time_struct = localtime(&t);
- textdomain("cal");
  setlocale(LC_ALL, "");
- bind_textdomain_codeset("cal", nl_langinfo(CODESET));
  mpz_init(year);
  switch(argc){
   case 1:
@@ -57,8 +54,7 @@ int main(int argc, char **argv){
    mpz_set_str(year, argv[2], 10);
  }
  if(mpz_sgn(year) < 1 || !month_min || month_min > 12){
-  fputs(gettext(
-   "learn to use cal, you idiot: http://opengroup.org/onlinepubs/9699919799/utilities/cal.html\n"),
+  fputs("http://opengroup.org/onlinepubs/9699919799/utilities/cal.html\n",
    stderr);
   exit(1);
  }
